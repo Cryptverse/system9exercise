@@ -50,15 +50,10 @@ async def add_diff(q, order_book):
         
                 for i in order_book['bids']:
                     if float(level[0]) == i[0]:
-                        if float(level[1]) == 0.0:
-                            bid_set = True
-                            remove = True
-                            break
                         i[1] = float(level[1])
                         bid_set = True
                         break
                     
-                if remove: order_book['bids'] = [x for x in order_book['bids'] if x[0] != float(level[0])]
                 if not bid_set: order_book['bids'].append([float(level[0]), float(level[1])])
 
             for level in item['a']:
@@ -67,20 +62,15 @@ async def add_diff(q, order_book):
                 
                 for i in order_book['asks']:
                     if float(level[0]) == i[0]:
-                        if float(level[1]) == 0.0:
-                            remove = True
-                            ask_set = True
-                            break
                         i[1] = float(level[1])
                         ask_set = True
                         break
 
-                if remove: order_book['asks'] = [x for x in order_book['asks'] if x[0] != float(level[0])]
                 if not ask_set:order_book['asks'].append([float(level[0]), float(level[1])])
 
             order_book['lastUpdateId'] = item['u']
-            order_book['bids'] = sorted(order_book['bids'], key = lambda x: x[0])
-            order_book['asks'] = sorted(order_book['asks'], key = lambda x: x[0], reverse=True)
+            order_book['bids'] = sorted([x for x in order_book['bids'] if x[1] != 0], key = lambda x: x[0])
+            order_book['asks'] = sorted([x for x in order_book['asks'] if x[1] != 0], key = lambda x: x[0], reverse=True)
             break
         else:
             continue
@@ -97,15 +87,10 @@ async def add_diff(q, order_book):
     
             for i in order_book['bids']:
                 if float(level[0]) == i[0]:
-                    if float(level[1]) == 0.0:
-                        remove = True
-                        bid_set = True
-                        break
                     i[1] = float(level[1])
                     bid_set = True
                     break
 
-            if remove: order_book['bids'] = [x for x in order_book['bids'] if x[0] != float(level[0])]
             if not bid_set: order_book['bids'].append([float(level[0]), float(level[1])])
 
         for level in item['a']:
@@ -114,20 +99,15 @@ async def add_diff(q, order_book):
             
             for i in order_book['asks']:
                 if float(level[0]) == i[0]:
-                    if float(level[1]) == 0.0:
-                        remove = True
-                        ask_set = True
-                        break
                     i[1] = float(level[1])
                     ask_set = True
                     break
 
-            if remove: order_book['asks'] = [x for x in order_book['asks'] if x[0] != float(level[0])]
             if not ask_set:order_book['asks'].append([float(level[0]), float(level[1])])
                     
         order_book['lastUpdateId'] = item['u']
-        order_book['bids'] = sorted(order_book['bids'], key = lambda x: x[0])
-        order_book['asks'] = sorted(order_book['asks'], key = lambda x: x[0], reverse=True)
+        order_book['bids'] = sorted([x for x in order_book['bids'] if x[1] != 0], key = lambda x: x[0])
+        order_book['asks'] = sorted([x for x in order_book['asks'] if x[1] != 0], key = lambda x: x[0], reverse=True)
         print(order_book)
 
 async def main():
