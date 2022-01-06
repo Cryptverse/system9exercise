@@ -9,11 +9,8 @@ async def depth_snapshot(order_book, q):
                 async with session.get('https://api.binance.com/api/v3/depth?symbol=BNBBTC&limit=1000') as resp:
                     resp = await resp.json()
                     order_book['lastUpdateId'] = resp['lastUpdateId']
-                    order_book['bids'] = resp['bids']
-                    order_book['asks'] = resp['asks']
-
-                    order_book['bids'] = [[float(x) for x in y] for y in  order_book['bids']]
-                    order_book['asks'] = [[float(x) for x in y] for y in  order_book['asks']]
+                    order_book['bids'] = [[float(x) for x in y] for y in  resp['bids']]
+                    order_book['asks'] = [[float(x) for x in y] for y in  resp['asks']]
                     print(order_book)
                     await add_diff(q, order_book)
         except Exception as e:
@@ -46,7 +43,6 @@ async def add_diff(q, order_book):
         if item['U'] <= order_book['lastUpdateId'] + 1 and item['u'] >= order_book['lastUpdateId'] + 1:
             for level in item['b']:
                 bid_set = False
-                remove = False
         
                 for i in order_book['bids']:
                     if float(level[0]) == i[0]:
@@ -58,7 +54,6 @@ async def add_diff(q, order_book):
 
             for level in item['a']:
                 ask_set = False
-                remove = False
                 
                 for i in order_book['asks']:
                     if float(level[0]) == i[0]:
@@ -82,7 +77,6 @@ async def add_diff(q, order_book):
         if item['u'] <= order_book['lastUpdateId']: continue
         
         for level in item['b']:
-            remove = False
             bid_set = False
     
             for i in order_book['bids']:
@@ -94,7 +88,6 @@ async def add_diff(q, order_book):
             if not bid_set: order_book['bids'].append([float(level[0]), float(level[1])])
 
         for level in item['a']:
-            remove = False
             ask_set = False
             
             for i in order_book['asks']:
