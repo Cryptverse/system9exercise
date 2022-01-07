@@ -9,8 +9,8 @@ async def depth_snapshot(q: asyncio.Queue, order_book: dict) -> None:
                 async with session.get('https://api.binance.com/api/v3/depth?symbol=BNBBTC&limit=1000') as resp:
                     resp = await resp.json()
                     order_book['lastUpdateId'] = resp['lastUpdateId']
-                    order_book['bids'] = [[float(x) for x in y] for y in  resp['bids']]
-                    order_book['asks'] = [[float(x) for x in y] for y in  resp['asks']]
+                    order_book['bids'] = [[float(x) for x in y] for y in resp['bids']]
+                    order_book['asks'] = [[float(x) for x in y] for y in resp['asks']]
                     print(order_book)
                     await add_diff(q, order_book)
         except Exception as e:
