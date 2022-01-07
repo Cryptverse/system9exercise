@@ -1,7 +1,7 @@
 import aiohttp
 import asyncio
 
-async def depth_snapshot(order_book, q):
+async def depth_snapshot(q: asyncio.Queue, order_book: dict) -> None:
     while q.qsize() == 0: await asyncio.sleep(0.0000001)
     while True:
         try:
@@ -17,7 +17,7 @@ async def depth_snapshot(order_book, q):
             print(e)
 
 
-async def queue_stream(q):
+async def queue_stream(q: asyncio.Queue) -> None:
     while True:
         try:
             async with aiohttp.ClientSession() as session:
@@ -35,7 +35,7 @@ async def queue_stream(q):
             print(e)
             continue
         
-async def add_diff(q, order_book):    
+async def add_diff(q: asyncio.Queue, order_book: dict) -> None:    
     while True:
         item = await q.get()
         if item['u'] <= order_book['lastUpdateId']: continue
@@ -103,10 +103,10 @@ async def add_diff(q, order_book):
         order_book['asks'] = sorted([x for x in order_book['asks'] if x[1] != 0], key = lambda x: x[0], reverse=True)
         print(order_book)
 
-async def main():
+async def main() -> None:
     q = asyncio.Queue()
     order_book = {'bids':[], 'asks': [], 'lastUpdateId': 0}
-    await asyncio.gather(queue_stream(q), depth_snapshot(order_book, q))
+    await asyncio.gather(queue_stream(q), depth_snapshot(q, order_book))
     await q.join()
 
 if __name__ == '__main__':
