@@ -65,8 +65,8 @@ async def add_diff(q: asyncio.Queue, order_book: dict) -> None:
                 if not ask_set:order_book['asks'].append([float(level[0]), float(level[1])])
 
             order_book['lastUpdateId'] = item['u']
-            order_book['bids'] = sorted([x for x in order_book['bids'] if x[1] != 0], key = lambda x: x[0])
-            order_book['asks'] = sorted([x for x in order_book['asks'] if x[1] != 0], key = lambda x: x[0], reverse=True)
+            order_book['bids'] = sorted([x for x in order_book['bids'] if x[1] != 0], key = lambda x: x[0], reverse=True)
+            order_book['asks'] = sorted([x for x in order_book['asks'] if x[1] != 0], key = lambda x: x[0])
             break
         else:
             continue
@@ -100,8 +100,8 @@ async def add_diff(q: asyncio.Queue, order_book: dict) -> None:
             if not ask_set:order_book['asks'].append([float(level[0]), float(level[1])])
                     
         order_book['lastUpdateId'] = item['u']
-        order_book['bids'] = sorted([x for x in order_book['bids'] if x[1] != 0], key = lambda x: x[0])
-        order_book['asks'] = sorted([x for x in order_book['asks'] if x[1] != 0], key = lambda x: x[0], reverse=True)
+        order_book['bids'] = sorted([x for x in order_book['bids'] if x[1] != 0], key = lambda x: x[0], reverse=True)
+        order_book['asks'] = sorted([x for x in order_book['asks'] if x[1] != 0], key = lambda x: x[0])
         print(order_book)
 
 async def main() -> None:
