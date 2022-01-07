@@ -23,11 +23,12 @@ async def queue_stream(q: asyncio.Queue) -> None:
             async with aiohttp.ClientSession() as session:
                 async with session.ws_connect('wss://stream.binance.com:9443/ws/bnbbtc@depth') as ws:
                     while True:
-                        
                         msg = await ws.receive()
                         
                         if msg.type == aiohttp.WSMsgType.TEXT:
                             await q.put(msg.json())
+                        elif msg.type == aiohttp.WSMsgType.CLOSED:
+                            break
                         elif msg.type == aiohttp.WSMsgType.ERROR:
                             break
                         
